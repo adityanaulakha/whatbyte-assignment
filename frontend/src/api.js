@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
 
 function getToken() {
   return localStorage.getItem('access');
@@ -15,10 +15,17 @@ async function request(path, options = {}) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const res = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers,
-  });
+  let res;
+  try {
+    res = await fetch(`${API_URL}${path}`, {
+      ...options,
+      headers,
+    });
+  } catch {
+    throw new Error(
+      `Cannot reach API at ${API_URL}. Check that the backend is running and VITE_API_URL is correct.`
+    );
+  }
 
   if (res.status === 204) {
     return null;
@@ -30,7 +37,7 @@ async function request(path, options = {}) {
     const message =
       data.detail ||
       (Array.isArray(data.errors) && data.errors.map((e) => e.message).join(', ')) ||
-      'Request failed.';
+      `Request failed (${res.status}).`;
     const error = new Error(message);
     error.status = res.status;
     error.data = data;

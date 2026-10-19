@@ -26,9 +26,9 @@ export default function Mappings() {
       setMappings(maps);
       setPatients(pats);
       setDoctors(docs);
-      if (!patientId && pats[0]) setPatientId(String(pats[0].id));
-      if (!doctorId && docs[0]) setDoctorId(String(docs[0].id));
-      if (!viewPatientId && pats[0]) setViewPatientId(String(pats[0].id));
+      setPatientId((current) => current || (pats[0] ? String(pats[0].id) : ''));
+      setDoctorId((current) => current || (docs[0] ? String(docs[0].id) : ''));
+      setViewPatientId((current) => current || (pats[0] ? String(pats[0].id) : ''));
     } catch (err) {
       setError(err.message);
     } finally {

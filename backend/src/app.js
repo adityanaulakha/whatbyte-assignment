@@ -9,8 +9,19 @@ const mappingRoutes = require('./routes/mappings');
 
 const app = express();
 
-app.use(helmet());
-app.use(cors());
+app.use(
+  helmet({
+    // Allow browser apps on other origins (e.g. Vercel) to call this API
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+  })
+);
+app.use(
+  cors({
+    origin: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 app.use(express.json());
 
 app.get('/', (req, res) => {

@@ -1,14 +1,22 @@
 function pgConfig() {
-  const connectionString = process.env.DATABASE_URL;
+  const connectionString = process.env.DATABASE_URL || '';
+
+  // Local Postgres: no SSL
   const isLocal =
-    !connectionString ||
     connectionString.includes('localhost') ||
     connectionString.includes('127.0.0.1');
 
+  // Render External URLs (*.render.com) require SSL.
+  // Render Internal URLs (private hostname, no render.com) must NOT use SSL.
+  const needsSsl =
+    !isLocal &&
+    (connectionString.includes('render.com') ||
+      connectionString.includes('sslmode=require') ||
+      process.env.PGSSL === 'true');
+
   return {
     connectionString,
-    // Render (and most cloud Postgres) require SSL for external connections
-    ssl: isLocal ? false : { rejectUnauthorized: false },
+    ssl: needsSsl ? { rejectUnauthorized: false } : false,
   };
 }
 

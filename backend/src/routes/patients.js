@@ -16,7 +16,10 @@ router.use(authenticate);
 
 const patientBody = [
   body('name').trim().notEmpty().withMessage('Name is required.'),
-  body('age').isInt({ min: 0, max: 150 }).withMessage('Age must be between 0 and 150.'),
+  body('age')
+    .isInt({ min: 0, max: 150 })
+    .withMessage('Age must be between 0 and 150.')
+    .toInt(),
   body('gender').trim().notEmpty().withMessage('Gender is required.'),
   body('medical_history').optional().isString(),
 ];

@@ -164,6 +164,7 @@ export default function Patients() {
 
       {modalOpen ? (
         <Modal title={editing ? 'Update patient' : 'Add patient'} onClose={() => setModalOpen(false)}>
+          {error ? <div className="alert alert-error">{error}</div> : null}
           <form onSubmit={onSubmit} className="form-grid">
             <label>
               Name
